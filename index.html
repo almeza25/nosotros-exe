@@ -179,6 +179,10 @@ let nombreUsuario = "";
 let escribiendo = false;
 let intervaloContador = null;
 
+let animacionActiva = null;
+let canvasCelebracion = null;
+let ctxCelebracion = null;
+
 function iniciarSistema() {
   const nombre = document.getElementById("nombreInput").value;
   const password = document.getElementById("passwordInput").value;
@@ -616,18 +620,18 @@ function mostrarLogro() {
 }
 
 function lanzarCelebracion() {
-  const canvas = document.getElementById("celebracion");
-  const ctx = canvas.getContext("2d");
+  canvasCelebracion = document.getElementById("celebracion");
+  ctxCelebracion = canvasCelebracion.getContext("2d");
 
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+  canvasCelebracion.width = window.innerWidth;
+  canvasCelebracion.height = window.innerHeight;
 
   let particulas = [];
 
   for (let i = 0; i < 80; i++) {
     particulas.push({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
+      x: Math.random() * canvasCelebracion.width,
+      y: Math.random() * canvasCelebracion.height,
       size: Math.random() * 8 + 2,
       speedY: Math.random() * 3 + 1,
       color: Math.random() > 0.5 ? "#00ff9f" : "pink",
@@ -636,48 +640,56 @@ function lanzarCelebracion() {
   }
 
   function dibujarCorazon(x, y, size) {
-    ctx.beginPath();
-    ctx.moveTo(x, y);
-    ctx.bezierCurveTo(x, y - size, x - size, y - size, x - size, y);
-    ctx.bezierCurveTo(x - size, y + size, x, y + size * 1.5, x, y + size * 2);
-    ctx.bezierCurveTo(x, y + size * 1.5, x + size, y + size, x + size, y);
-    ctx.bezierCurveTo(x + size, y - size, x, y - size, x, y);
-    ctx.fill();
+    ctxCelebracion.beginPath();
+    ctxCelebracion.moveTo(x, y);
+    ctxCelebracion.bezierCurveTo(x, y - size, x - size, y - size, x - size, y);
+    ctxCelebracion.bezierCurveTo(x - size, y + size, x, y + size * 1.5, x, y + size * 2);
+    ctxCelebracion.bezierCurveTo(x, y + size * 1.5, x + size, y + size, x + size, y);
+    ctxCelebracion.bezierCurveTo(x + size, y - size, x, y - size, x, y);
+    ctxCelebracion.fill();
   }
 
   function animar() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctxCelebracion.clearRect(0, 0, canvasCelebracion.width, canvasCelebracion.height);
 
     particulas.forEach(p => {
-      ctx.fillStyle = p.color;
+      ctxCelebracion.fillStyle = p.color;
 
       if (p.tipo === "corazon") {
         dibujarCorazon(p.x, p.y, p.size);
       } else {
-        ctx.fillRect(p.x, p.y, p.size, p.size);
+        ctxCelebracion.fillRect(p.x, p.y, p.size, p.size);
       }
 
       p.y += p.speedY;
 
-      if (p.y > canvas.height) {
+      if (p.y > canvasCelebracion.height) {
         p.y = -10;
-        p.x = Math.random() * canvas.width;
+        p.x = Math.random() * canvasCelebracion.width;
       }
     });
 
-    requestAnimationFrame(animar);
+    animacionActiva = requestAnimationFrame(animar);
   }
 
   animar();
+}
 
-  // detener después de 5 segundos
-  setTimeout(() => {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-  }, 5000);
+function detenerCelebracion() {
+  if (animacionActiva) {
+    cancelAnimationFrame(animacionActiva);
+    animacionActiva = null;
+  }
+
+  if (ctxCelebracion && canvasCelebracion) {
+    ctxCelebracion.clearRect(0, 0, canvasCelebracion.width, canvasCelebracion.height);
+  }
 }
 
 function reiniciar() {
-  detenerContador(); // 🔥 detener contador
+  detenerCelebracion(); 
+
+  detenerContador();
 
   document.getElementById("box").style.display = "none";
   document.getElementById("login").style.display = "block";
@@ -686,7 +698,7 @@ function reiniciar() {
   document.getElementById("passwordInput").value = "";
   document.getElementById("mensajeLogin").innerText = "";
 
-  nombreUsuario = ""; // limpia usuario
+  nombreUsuario = "";
 }
 
 function escribirTexto(textoNuevo, callback) {
