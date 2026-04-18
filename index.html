@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Nosotros.exe</title>
+
+
+<style>
+  body {
+    background-color: black;
+    color: #00ff9f;
+    font-family: "Courier New", monospace;
+    text-align: center;
+    padding: 50px;
+  }
+
+  button {
+    background: #00ff9f;
+    color: black;
+    border: none;
+    padding: 10px 20px;
+    margin: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  #box {
+    border: 1px solid #00ff9f;
+    padding: 20px;
+    border-radius: 10px;
+  }
+
+  .fade {
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    }
+
+    .show {
+    opacity: 1;
+    }
+
+    #texto {
+    min-height: 200px;
+    white-space: pre-wrap; 
+    word-wrap: break-word;
+    }
+
+    #texto p {
+    margin: 5px 0; 
+    }
+
+    .cursor::after {
+    content: "|";
+    animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+    0%, 50%, 100% { opacity: 1; }
+    25%, 75% { opacity: 0; }
+    }
+
+    #login {
+    border: 1px solid #00ff9f;
+    padding: 30px;
+    border-radius: 10px;
+    max-width: 400px;
+    margin: 100px auto;
+    box-shadow: 0 0 20px #00ff9f;
+    transition: transform 0.2s;
+    }
+
+    input {
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    outline: none;
+    width: 80%;
+    text-align: center;
+    }
+
+    #mensajeLogin {
+    margin-top: 10px;
+    font-size: 14px;
+    height: 20px;
+    }
+
+    #celebracion {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    }
+
+    #contador {
+    margin-top: 20px;
+    font-size: 18px;
+    color: #00ff9f;
+    }
+
+    .aniversario {
+    color: #ff4d6d;
+    text-shadow: 0 0 10px #ff4d6d;
+    }
+
+    .logro {
+    color: gold;
+    text-shadow: 0 0 10px gold, 0 0 20px gold;
+    font-size: 22px;
+    animation: aparecerLogro 1s ease, brillo 1.5s infinite alternate;
+    }
+
+    @keyframes aparecerLogro {
+    from {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+    }
+
+    @keyframes brillo {
+    from {
+    text-shadow: 0 0 10px gold;
+    }
+    to {
+    text-shadow: 0 0 25px gold, 0 0 40px gold;
+    }
+
+    
+}
+
+
+</style>
+</head>
+
+<body>
+
+<div id="contador"></div>
+
+<div id="login">
+  <h2>Acceso al sistema</h2>
+  <p>Usuario requerido</p>
+  <input type="text" id="nombreInput" placeholder="Nombre..." />
+
+  <p>Clave de acceso</p>
+  <input type="password" id="passwordInput" placeholder="••••••" />
+
+  <br><br>
+  <button onclick="iniciarSistema()">Entrar</button>
+
+  <p id="mensajeLogin"></p>
+</div>
+
+<div id="box" style="display: none;">
+  <div id="texto">
+  Inicializando sistema...<br>
+  A veces, los momentos más importantes de la vida<br>
+  no llegan como algo extraordinario…<br>
+  sino disfrazados de días normales.<br>
+  Cargando archivo: "Nosotros.exe"
+</div>
+
+  <div id="opciones">
+    <button onclick="nivel1()">Iniciar</button>
+  </div>
+</div>
+
+<script>
+
+const textoElemento = document.getElementById("texto");
+const opcionesElemento = document.getElementById("opciones");
+const PASSWORD_CORRECTA = "2305";
+
+let nombreUsuario = "";
+let escribiendo = false;
+let intervaloContador = null;
+
+function iniciarSistema() {
+  const nombre = document.getElementById("nombreInput").value;
+  const password = document.getElementById("passwordInput").value;
+  const mensaje = document.getElementById("mensajeLogin");
+
+  if (nombre.trim() === "" || password.trim() === "") {
+    mensaje.style.color = "orange";
+    mensaje.innerText = "Completa todos los campos";
+    return;
+  }
+
+  if (password !== PASSWORD_CORRECTA) {
+    mensaje.style.color = "red";
+    mensaje.innerText = "Acceso denegado…" 
+    + "¿Seguro que eres tú? 😏";
+
+    // efecto glitch leve
+    document.getElementById("login").style.transform = "translateX(5px)";
+    setTimeout(() => {
+      document.getElementById("login").style.transform = "translateX(-5px)";
+    }, 100);
+    setTimeout(() => {
+      document.getElementById("login").style.transform = "translateX(0)";
+    }, 200);
+
+    return;
+  }
+
+  // acceso correcto
+  nombreUsuario = nombre;
+
+  mensaje.style.color = "#00ff9f";
+  mensaje.innerText = "Acceso concedido ✔";
+
+  setTimeout(() => {
+    document.getElementById("login").style.display = "none";
+    document.getElementById("box").style.display = "block";
+
+    if (esAniversario()) {
+    pantallaAniversario();
+    return;
+    }
+
+    cambiarTextoConFade(`Inicializando sistema...
+
+Usuario verificado: ${nombreUsuario} ❤️
+
+Acceso autorizado.
+
+Cargando recuerdos...
+
+Ejecutando:
+"Nosotros.exe"`,
+
+    `<button onclick="nivel1()">Iniciar</button>`);
+  }, 1000);
+}
+
+function nivel1() {
+  cambiarTextoConFade(` Usuario ${nombreUsuario} conectado...
+  Año: 2025
+
+Lugar: Un salón cualquiera…
+una materia complicada…
+ecuaciones diferenciales.
+
+Dos caminos coincidieron
+sin saber que no volverían a separarse.
+
+Todo empezó simple…
+preguntas de exámenes,
+conversaciones pequeñas,
+miradas que aún no significaban nada.
+
+O al menos… eso creíamos.
+
+Porque incluso desde ahí,
+algo ya se estaba escribiendo.`,
+
+  `<button onclick="nivel2()">Continuar</button>`);
+}
+
+function nivel2() {
+  cambiarTextoConFade(`A veces, lo que parece un error…
+termina siendo lo mejor que te pudo pasar.
+
+Reprobamos.
+
+Y aunque en ese momento
+se sentía como un fracaso…
+
+la vida tenía otros planes.
+
+Volvimos al mismo lugar,
+a la misma clase,
+pero ya no éramos los mismos.
+
+Esta vez…
+
+estábamos libres.
+
+Y entre risas, conversaciones
+y pequeños intentos de coincidir…
+
+nació algo distinto.
+
+Algo que ya no era casualidad.`,
+
+  `<button onclick="nivel3()">Continuar</button>`);
+}
+
+function nivel3() {
+  cambiarTextoConFade(`Sistema detecta múltiples posibilidades...
+
+Registro incompleto...
+
+¿Qué hiciste ese día? 😏`,
+
+  `<button onclick="opcionEstudiar()">Estudiar 😇</button>
+   <button onclick="opcionBuscar()">Buscarme 😏</button>`);
+}
+
+function opcionEstudiar() {
+  cambiarTextoConFade(`Hmm… opción registrada: “Estudiar” 😇
+
+Probablemente sí…
+pero algo me dice que no fue lo más importante ese día.
+
+Porque al final…
+
+terminamos coincidiendo igual.
+
+Y eso…
+
+no estaba en ningún plan de estudio.`,
+
+  `<button onclick="continuarHistoria()">Continuar</button>`);
+}
+
+function opcionBuscar() {
+  cambiarTextoConFade(`Opción registrada: “Buscarme” 😏
+
+Sabía que ibas a elegir esa.
+
+No fue un gran evento.
+
+No fue un momento perfecto.
+
+Fue un pay de limón!
+
+Pero fue uno de esos momentos
+que se quedan contigo…
+
+Sistema requiere interpretación del usuario…
+
+¿Qué pasó realmente ese día? 😏`,
+
+  `<button onclick="opcionCoqueteo()">Fue coqueteo 😏</button>
+   <button onclick="opcionInocente()">Fue algo normal 😇</button>`);
+}
+
+function opcionCoqueteo() {
+  cambiarTextoConFade(`Respuesta registrada: “Fue coqueteo” 😏
+
+"Están como la que los vende jajaja"
+
+No fue solo un comentario.
+
+Fue una forma de acercarte,
+de decir algo sin decirlo directamente.
+
+Y aunque respondí con un "babas"…
+
+los dos sabíamos
+que la conversación ya no era tan equis.
+
+Porque ahí…
+
+algo ya estaba empezando.`,
+
+  `<button onclick="continuarHistoria()">Continuar</button>`);
+}
+
+function opcionInocente() {
+  cambiarTextoConFade(`Respuesta registrada: “Fue algo normal” 😇
+
+Tal vez sí…
+
+solo era un pay de limón.
+
+Una conversación cualquiera.
+
+Un mensaje más.
+
+Pero a veces…
+
+lo importante no está en lo que pasa,
+sino en lo que empieza a sentirse.
+
+Porque incluso en algo tan simple…
+
+ya nos estábamos encontrando.`,
+
+  `<button onclick="continuarHistoria()">Continuar</button>`);
+}
+
+function continuarHistoria() {
+  nivel4(); // sigue tu flujo normal
+}
+
+function nivel4() {
+  cambiarTextoConFade(`Evento crítico detectado…
+
+Un favor…
+unos materiales…
+una excusa cualquiera.
+
+Y de pronto…
+
+un beso.
+
+Sistema no puede determinar el origen exacto del momento…
+
+¿Cómo lo recuerdas? 💋`,
+
+  `<button onclick="opcionInesperado()">Fue inesperado 😳</button>
+   <button onclick="opcionSabia()">Ya lo veía venir 😏</button>`);
+}
+
+function opcionInesperado() {
+  cambiarTextoConFade(`Respuesta registrada: “Inesperado” 😳
+
+Y sí…
+
+no hubo aviso,
+pero hubo señal clara.
+
+Aunque lo dude, pasó.
+
+Un momento rápido,
+pero suficiente
+para detener todo lo demás.
+
+Porque a veces…
+
+lo más importante en la vida
+no se planea o quizá sí, lo planeas y te funciona.
+
+Y en ese instante…
+
+algo cambió para siempre.`,
+
+  `<button onclick="continuarHistoria2()">Continuar</button>`);
+}
+
+function opcionSabia() {
+  cambiarTextoConFade(`Respuesta registrada: “Ya lo veía venir” 😏
+
+Tal vez…
+
+no fue tan sorpresa.
+
+Porque entre miradas,
+momentos
+y pequeñas señales…
+
+algo ya se estaba construyendo.
+
+Ese beso
+no fue el inicio…
+
+fue la confirmación.
+
+De que lo que estaba pasando…
+
+ya no era juego.`,
+
+  `<button onclick="continuarHistoria2()">Continuar</button>`);
+}
+
+function continuarHistoria2() {
+  nivel5();
+}
+
+function nivel5() {
+  cambiarTextoConFade(`No fue en un momento perfecto.
+
+Fue en uno difícil.
+
+Estrés,
+cansancio,
+presión.
+
+Ecuaciones,
+series,
+y un mundo encima.
+
+Y entre todo eso…
+
+te llamé.
+
+Y llegaste.
+
+No para resolver el examen,
+ni para dar respuestas…
+
+sino para quedarte.
+
+Para acompañar.
+
+Para hacer que todo pesara menos.
+
+Y fue ahí…
+
+cuando entendí
+que ya no eras coincidencia.
+
+Eras elección.`,
+
+  `<button onclick="final()">Final</button>`);
+}
+
+function final() {
+  cambiarTextoConFade(`Sistema en estado crítico…
+
+Dos caminos detectados.
+
+Dos posibilidades.
+
+Pero una sola decisión importante…
+
+¿Qué hacemos ahora? 💖`,
+
+  `<button onclick="opcionQuedarse()">Hablarlo ❤️</button>
+   <button onclick="opcionIntentar()">Intentarlo 😳</button>`);
+}
+
+function opcionQuedarse() {
+  cambiarTextoConFade(`Respuesta registrada: “Hablarlo” ❤️
+
+Desde ese momento…
+
+ya no éramos dos personas coincidiendo.
+
+Éramos dos personas eligiéndose.
+
+Sin prisas.
+Sin promesas exageradas.
+
+Una plática que lo cambio todo, una platica
+de esas profundas que te ponen a pensar que
+es lo que quieres para tu vida.
+
+Y fue así…
+
+que sin darnos cuenta…
+
+nos convertimos en algo real, inseparable y maravilloso.`,
+
+  `<button onclick="gracias()">Continuar</button>`);
+}
+
+function opcionIntentar() {
+  cambiarTextoConFade(`Respuesta registrada: “Intentarlo” 😳
+
+Y tal vez empezó así…
+
+como un “vamos a conocernos”.
+
+Sin saber exactamente a dónde íbamos,
+pero con ganas de descubrirlo juntos.
+
+Y poco a poco…
+
+eso que era intento,
+se volvió decisión.
+
+Y esa decisión…
+
+nos convirtió en algo real.`,
+
+  `<button onclick="gracias()">Continuar</button>`);
+}
+
+function gracias() {
+  cambiarTextoConFade(`Al día de hoy, puedo decirte
+  que las cosas maravillosas existen, tú, ${nombreUsuario}
+  eres la prueba de ello.
+
+  Gracias por dejarme vivir cada momento a tu lado, por
+  seguirme en cada locura o momento random que tengo.
+
+  Gracias por elegirme y dejarme ser parte de tu vida.
+  
+  Siempre estare eternamente agredecida con la vida por
+  permitirme conocerte, conocer a ese niño interior que tienes,
+  pero principalmente, por demostrarme que si ambos quieren 
+  claro QUE SE PUEDE!
+
+  Hoy estamos aquí, a un mes de nuestro aniversario y no 
+  puede haber mejor momento que este.
+
+  Estoy muy feliz de planear mi vida contigo, vamos juntos.
+
+  Gracias por ser tú, ${nombreUsuario} ❤️
+
+  Feliz (casi) aniversario`,
+
+  `<button onclick="mostrarLogro()">Final</button>`);
+
+  setTimeout(iniciarContador, 1000);
+}
+
+function mostrarLogro() {
+  const textoElemento = document.getElementById("texto");
+
+  textoElemento.innerHTML = `
+    <div class="logro">
+      🏆 Logro desbloqueado<br><br>
+      "Nosotros ❤️"<br><br>
+      Dos caminos que coincidieron…<br>
+      y decidieron quedarse.
+    </div>
+  `;
+
+  opcionesElemento.innerHTML = `
+    <button onclick="reiniciar()">Reiniciar sistema</button>
+  `;
+
+  lanzarCelebracion(); 
+
+  if (navigator.vibrate) {
+  navigator.vibrate([200, 100, 200]); 
+  }
+}
+
+function lanzarCelebracion() {
+  const canvas = document.getElementById("celebracion");
+  const ctx = canvas.getContext("2d");
+
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  let particulas = [];
+
+  for (let i = 0; i < 80; i++) {
+    particulas.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      size: Math.random() * 8 + 2,
+      speedY: Math.random() * 3 + 1,
+      color: Math.random() > 0.5 ? "#00ff9f" : "pink",
+      tipo: Math.random() > 0.5 ? "corazon" : "confetti"
+    });
+  }
+
+  function dibujarCorazon(x, y, size) {
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.bezierCurveTo(x, y - size, x - size, y - size, x - size, y);
+    ctx.bezierCurveTo(x - size, y + size, x, y + size * 1.5, x, y + size * 2);
+    ctx.bezierCurveTo(x, y + size * 1.5, x + size, y + size, x + size, y);
+    ctx.bezierCurveTo(x + size, y - size, x, y - size, x, y);
+    ctx.fill();
+  }
+
+  function animar() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    particulas.forEach(p => {
+      ctx.fillStyle = p.color;
+
+      if (p.tipo === "corazon") {
+        dibujarCorazon(p.x, p.y, p.size);
+      } else {
+        ctx.fillRect(p.x, p.y, p.size, p.size);
+      }
+
+      p.y += p.speedY;
+
+      if (p.y > canvas.height) {
+        p.y = -10;
+        p.x = Math.random() * canvas.width;
+      }
+    });
+
+    requestAnimationFrame(animar);
+  }
+
+  animar();
+
+  // detener después de 5 segundos
+  setTimeout(() => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }, 5000);
+}
+
+function reiniciar() {
+  detenerContador(); // 🔥 detener contador
+
+  document.getElementById("box").style.display = "none";
+  document.getElementById("login").style.display = "block";
+
+  document.getElementById("nombreInput").value = "";
+  document.getElementById("passwordInput").value = "";
+  document.getElementById("mensajeLogin").innerText = "";
+
+  nombreUsuario = ""; // limpia usuario
+}
+
+function escribirTexto(textoNuevo, callback) {
+  let i = 0;
+  const elemento = document.getElementById("texto");
+
+  elemento.textContent = "";
+  escribiendo = true; // 🔒 bloquea
+
+  function escribir() {
+    if (i < textoNuevo.length) {
+      elemento.textContent += textoNuevo.charAt(i);
+      i++;
+      setTimeout(escribir, 30);
+    } else {
+      escribiendo = false; // 🔓 desbloquea
+      if (callback) callback();
+    }
+  }
+
+  escribir();
+}
+
+function cambiarTextoConFade(nuevoTexto, siguienteBoton) {
+  if (escribiendo) return; // 🚫 evita bugs
+
+  const box = document.getElementById("box");
+
+  box.classList.remove("show");
+  box.classList.add("fade");
+
+  opcionesElemento.innerHTML = ""; // limpia botones mientras escribe
+
+  setTimeout(() => {
+    escribirTexto(nuevoTexto, () => {
+      opcionesElemento.innerHTML = siguienteBoton;
+    });
+
+    box.classList.remove("fade");
+    box.classList.add("show");
+  }, 500);
+}
+
+
+function iniciarContador() {
+  const fechaObjetivo = new Date("2026-05-25T00:00:00").getTime();
+
+  intervaloContador = setInterval(() => {
+    const ahora = new Date().getTime();
+    const diferencia = fechaObjetivo - ahora;
+
+    if (diferencia <= 0) {
+      document.getElementById("contador").innerText = "Hoy es nuestro día ❤️";
+      clearInterval(intervaloContador);
+      return;
+    }
+
+    const dias = Math.floor(diferencia / (1000 * 60 * 60 * 24));
+    const horas = Math.floor((diferencia / (1000 * 60 * 60)) % 24);
+    const minutos = Math.floor((diferencia / (1000 * 60)) % 60);
+    const segundos = Math.floor((diferencia / 1000) % 60);
+
+    document.getElementById("contador").innerText =
+      `Faltan ${dias} días, ${horas}h ${minutos}m ${segundos}s ❤️`;
+  }, 1000);
+}
+
+function detenerContador() {
+  if (intervaloContador) {
+    clearInterval(intervaloContador);
+    intervaloContador = null;
+  }
+
+  document.getElementById("contador").innerText = "";
+}
+
+function esAniversario() {
+  const hoy = new Date();
+  const dia = hoy.getDate();
+  const mes = hoy.getMonth() + 1; // 
+
+  return dia === 23 && mes === 5;
+}
+
+function pantallaAniversario() {
+  cambiarTextoConFade(` 23 de mayo 2026.
+
+Hoy no es un día cualquiera...
+
+Hoy es el día en que todo comenzó a sentirse aún más diferente.
+
+El día en que dos caminos
+dejaron de ser coincidencia
+y se convirtieron en elección.
+
+Aquel salida al cine, en donde yo no sospechaba nada
+donde todo salio perfecto y no hay día más perfecto
+que ese, aquel día donde te di el primer "sí" más
+seguro de nuestra relación.
+
+Sigamos viviendo como hasta ahora, sigamos siendo
+lo que somos hoy en día, sigamos eligiendonos día a día.
+
+Sé que desde hace 1 año no estoy sola, tengo quien me acompañe
+en cada paso que yo decida dar, eso me trae mucha paz, porque se
+que dentro de todo este mundo lleno de caos, TÚ ERES MI PAZ.
+
+Este es un buen día para recordar cada decisión que nos llevo
+a lo que somos ahora, para recordar aquel momento que nos marco 
+como relación o aquel momento que más hemos disfrutado.
+
+Gracias por cada momento,
+por cada risa,
+por cada vez que decidiste quedarte.
+
+Hoy celebramos lo que somos…
+
+y todo lo que aún nos falta vivir.
+
+Te amo ${nombreUsuario} ❤️`,
+
+  `<button onclick="reiniciar()">Volver</button>`);
+
+  document.getElementById("texto").classList.add("aniversario");
+}
+
+</script>
+
+<canvas id="celebracion"></canvas>
+</body>
+</html>
