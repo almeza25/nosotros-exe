@@ -171,6 +171,11 @@
 
 <script>
 
+const DIA_ACTUAL = 1; 
+const desbloqueoNivel2 = new Date("2026-04-21T11:00:00");
+const desbloqueoNivel3 = new Date("2026-04-22T09:00:00");
+const desbloqueoNivel4 = new Date("2026-04-23T11:00:00");
+
 const textoElemento = document.getElementById("texto");
 const opcionesElemento = document.getElementById("opciones");
 const PASSWORD_CORRECTA = "2305";
@@ -265,7 +270,17 @@ algo ya se estaba escribiendo.`,
   `<button onclick="nivel2()">Continuar</button>`);
 }
 
+function estaDesbloqueado(fecha) {
+  const ahora = new Date();
+  return ahora >= fecha;
+}
+
 function nivel2() {
+  if (!estaDesbloqueado(desbloqueoNivel2)) {
+    bloquearTiempo(desbloqueoNivel2);
+    return;
+  }
+
   cambiarTextoConFade(`A veces, lo que parece un error…
 termina siendo lo mejor que te pudo pasar.
 
@@ -295,6 +310,11 @@ Algo que ya no era casualidad.`,
 }
 
 function nivel3() {
+  if (!estaDesbloqueado(desbloqueoNivel3)) {
+    bloquearTiempo(desbloqueoNivel3);
+    return;
+  }
+
   cambiarTextoConFade(`Sistema detecta múltiples posibilidades...
 
 Registro incompleto...
@@ -394,6 +414,11 @@ function continuarHistoria() {
 }
 
 function nivel4() {
+  if (!estaDesbloqueado(desbloqueoNivel4)) {
+    bloquearTiempo(desbloqueoNivel4);
+    return;
+  }
+
   cambiarTextoConFade(`Evento crítico detectado…
 
 Un favor…
@@ -468,6 +493,11 @@ function continuarHistoria2() {
 }
 
 function nivel5() {
+  if (DIA_ACTUAL < 4) {
+    bloquear();
+    return;
+  }
+
   cambiarTextoConFade(`No fue en un momento perfecto.
 
 Fue en uno difícil.
@@ -568,6 +598,10 @@ nos convirtió en algo real.`,
 }
 
 function gracias() {
+  if (DIA_ACTUAL < 4) {
+    bloquear();
+    return;
+  }
   cambiarTextoConFade(`Al día de hoy, puedo decirte
   que las cosas maravillosas existen, tú, ${nombreUsuario}
   eres la prueba de ello.
@@ -824,6 +858,31 @@ Te amo ${nombreUsuario} ❤️`,
 
   document.getElementById("texto").classList.add("aniversario");
 }
+
+
+function bloquear() {
+  cambiarTextoConFade(`⚠️ Acceso restringido...
+
+Este contenido aún no ha sido desbloqueado.
+
+Vuelve más tarde`,
+
+  `<button onclick="reiniciar()">Volver</button>`);
+}
+
+
+function obtenerDia() {
+  const hoy = new Date();
+  const dia = hoy.getDate();
+
+  // AJUSTA ESTOS DÍAS A TUS FECHAS REALES
+  if (dia === 20) return 1; // lunes
+  if (dia === 21) return 2; // martes
+  if (dia === 22) return 3; // miércoles
+  return 4; // jueves o después
+}
+
+const DIA_ACTUAL = obtenerDia();
 
 </script>
 
