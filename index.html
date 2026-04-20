@@ -172,9 +172,6 @@
 <script>
 
 const DIA_ACTUAL = 1; 
-const desbloqueoNivel2 = new Date("2026-04-21T11:00:00");
-const desbloqueoNivel3 = new Date("2026-04-22T09:00:00");
-const desbloqueoNivel4 = new Date("2026-04-23T11:00:00");
 
 const textoElemento = document.getElementById("texto");
 const opcionesElemento = document.getElementById("opciones");
@@ -248,7 +245,7 @@ Ejecutando:
 
 function nivel1() {
   cambiarTextoConFade(` Usuario ${nombreUsuario} conectado...
-  Año: 2024
+  Año: 2025
 
 Lugar: Un salón cualquiera…
 una materia complicada…
@@ -270,14 +267,9 @@ algo ya se estaba escribiendo.`,
   `<button onclick="nivel2()">Continuar</button>`);
 }
 
-function estaDesbloqueado(fecha) {
-  const ahora = new Date();
-  return ahora >= fecha;
-}
-
 function nivel2() {
-  if (!estaDesbloqueado(desbloqueoNivel2)) {
-    bloquearTiempo(desbloqueoNivel2);
+  if (DIA_ACTUAL < 2) {
+    bloquear();
     return;
   }
 
@@ -310,10 +302,12 @@ Algo que ya no era casualidad.`,
 }
 
 function nivel3() {
-  if (!estaDesbloqueado(desbloqueoNivel3)) {
-    bloquearTiempo(desbloqueoNivel3);
+  if (DIA_ACTUAL < 3) {
+    bloquear();
     return;
   }
+
+
 
   cambiarTextoConFade(`Sistema detecta múltiples posibilidades...
 
@@ -414,8 +408,8 @@ function continuarHistoria() {
 }
 
 function nivel4() {
-  if (!estaDesbloqueado(desbloqueoNivel4)) {
-    bloquearTiempo(desbloqueoNivel4);
+  if (DIA_ACTUAL < 4) {
+    bloquear();
     return;
   }
 
@@ -869,20 +863,6 @@ Vuelve más tarde`,
 
   `<button onclick="reiniciar()">Volver</button>`);
 }
-
-
-function obtenerDia() {
-  const hoy = new Date();
-  const dia = hoy.getDate();
-
-  // AJUSTA ESTOS DÍAS A TUS FECHAS REALES
-  if (dia === 20) return 1; // lunes
-  if (dia === 21) return 2; // martes
-  if (dia === 22) return 3; // miércoles
-  return 4; // jueves o después
-}
-
-const DIA_ACTUAL = obtenerDia();
 
 </script>
 
